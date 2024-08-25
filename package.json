@@ -1,0 +1,19 @@
+{
+  "name": "root",
+  "private": true,
+  "workspaces": [
+    "frontend",
+    "backend"
+  ],
+  "scripts": {
+    "start": "lerna run start"
+  },
+  "dependencies": {
+    "babel-jest": "24.1.0",
+    "jest": "25.0.0",
+    "react-scripts": "^5.0.1"
+  },
+  "devDependencies": {
+    "lerna": "^6.4.1"
+  }
+}
