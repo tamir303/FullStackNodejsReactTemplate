@@ -20,26 +20,28 @@ const LoginRegister = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+  
     try {
       let user;
-
+      const action = isLogin ? 'Logging in' : 'Registering';
+  
+      console.log(`${action}:`, { username, password });
+  
       if (isLogin) {
-        console.log("Logging in:", { username, password });
-        user = await loginUser(username, password)
-
+        user = await loginUser(username, password);
       } else {
-        console.log("Registering:", { username, password });
-        user = await registerUser(username, password)
+        user = await registerUser(username, password);
       }
-
-      console.log(user)
-
-      if (user?.username)
-        navigate(`/todos?user=${user.username}`)
-    } 
-    
-    catch (ex) {
-      console.error("API Auth request Internal Error!")
+  
+      console.log("User:", user);
+  
+      if (user?.username) {
+        navigate(`/todos?user=${user.username}`);
+      } else {
+        throw new Error("User data is missing");
+      }
+    } catch (error) {
+      console.error("API Auth request Internal Error:", error.message);
     }
   };
 
