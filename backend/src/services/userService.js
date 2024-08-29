@@ -25,8 +25,7 @@ class UserService {
         return null;
       }
 
-      const hashedPassword = await bcrypt.hash(password, 10);
-      if (await bcrypt.compare(hashedPassword, existUser.password))
+      if (await bcrypt.compare(password, existUser.password))
         return existUser;
 
       console.error(`User ${username} password is incorrect!`);
@@ -70,7 +69,7 @@ class UserService {
       const user = await User.findById(userId);
       if (!user) {
         console.error(`User ${userId} wasn't found!`);
-        return null;
+        return undefined;
       }
 
       return user;

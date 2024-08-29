@@ -1,7 +1,7 @@
 import express from "express";
 import UserController from "../controllers/userController.js";
 
-const userRouter = express.Router();
+const authRouter = express.Router();
 
 /**
  * @swagger
@@ -49,7 +49,7 @@ const userRouter = express.Router();
  *       500:
  *         description: Internal server error
  */
-userRouter.post("/auth/register", UserController.registerUser);
+authRouter.post("/register", UserController.registerUser);
 
 /**
  * User Login Schema
@@ -99,6 +99,6 @@ userRouter.post("/auth/register", UserController.registerUser);
  *       500:
  *         description: Internal server error
  */
-userRouter.post("/auth/login", UserController.loginUser);
+authRouter.post("/login", UserController.loginUser);
 
-export default userRouter;
+export default authRouter;

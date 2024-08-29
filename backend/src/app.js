@@ -1,7 +1,7 @@
 import express from "express";
 import { connectToMongo } from "../src/database/database.js";
 import defaultMiddlewares from "./middleware/defaultMiddlewars.js";
-import userRouter from "./routes/userRoutes.js";
+import authRouter from "./routes/authRoutes.js";
 import { authenticateJWT } from "./middleware/authMiddleware.js";
 import swaggerUi from "swagger-ui-express";
 import { swaggerSpec } from "../swagger.js";
@@ -27,7 +27,7 @@ app.use(authenticateJWT(routesWithoutAuth));
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // Register user-related routes
-app.use(userRouter);
+app.use('/auth', authRouter);
 
 // Connect to MongoDB
 connectToMongo();

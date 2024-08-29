@@ -1,8 +1,12 @@
 import chalk from "chalk";
 
-const loggerMiddleware = (req, res, next) => {
+const loggerMiddleware = async (req, res, next) => {
   const { method, url, headers, body, query } = req;
   const timestamp = new Date().toISOString();
+
+  // Dont log passwords
+  if (body?.password)
+    body.password = "*******"
 
   // Log request details
   console.log(
@@ -13,8 +17,14 @@ const loggerMiddleware = (req, res, next) => {
   console.log(chalk.yellow(`Body: ${JSON.stringify(body, null, 2)}`));
 
   // Listen for the response to log status code
-  res.on("finish", () => {
-    console.log(`Response Status: ${res.statusCode}`);
+  res.on("finish", async () => {
+    if (res.statusCode >= 400) {
+      console.log(chalk.bold(`Response Status: ${res.statusCode}`));
+      console.log(chalk.red(`Response Message: ${res.statusMessage}`))
+    } else {
+      console.log(chalk.bold(`Response Status: ${res.statusCode}`));
+      console.log(chalk.blue(`Response Message: ${res.statusMessage}`))
+    }
   });
 
   // Call the next middleware or route handler

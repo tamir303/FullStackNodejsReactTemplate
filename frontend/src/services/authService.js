@@ -1,39 +1,41 @@
 import axios from "axios";
 
-const register_endpoint = process.env.API_REGISTER_ENDPOINT;
-const login_endpoint = process.env.API_LOGIN_ENDPOINT;
-
-const apiClient = axios.create({
-  baseURL: process.env.API_HOST,
-  withCredentials: true,
-});
+const register_endpoint = "http://localhost:4000/auth/register";
+const login_endpoint =  "http://localhost:4000/auth/login";
 
 // POST request for user registration
-const registerUser = async (username, password) => {
-  try {
-    const res = apiClient.post(`${register_endpoint}`, {
-      username,
-      password,
-    });
+export const registerUser = async (username, password) => {
+  const res = await axios.post(`${register_endpoint}`, {
+    username,
+    password,
+  })
+  .then(res => {
+    // Set token cookie
+    localStorage.setItem('token', res.data.token)
 
-    return await res.data;
-  } catch (ex) {
+    return res.data.user;
+  })
+  .catch(ex => {
     throw new Error("Registration failed!");
-  }
+  })
 };
 
-// POST request for user registration
-const loginUser = async (username, password) => {
-  try {
-    const res = apiClient.post(`${login_endpoint}`, {
-      username,
-      password,
-    });
+// POST request for user login
+export const loginUser = async (username, password) => {
+  const res = await axios.post(`${login_endpoint}`, {
+    username,
+    password,
+  })
+  .then(res => {
+    // Set token cookie
+    if (!localStorage.getItem('token')) 
+      localStorage.setItem('token', res.data.token)
 
-    return await res.data;
-  } catch (ex) {
+    return res.data.user;
+  })
+  .catch(ex => {
     throw new Error("Login failed!");
-  }
+  })
 };
 
 export default { loginUser, registerUser };

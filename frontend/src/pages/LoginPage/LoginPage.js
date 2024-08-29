@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Container,
   Box,
@@ -9,18 +10,36 @@ import {
   Paper,
 } from "@mui/material";
 import "./LoginPage.css"
+import { loginUser, registerUser } from "../../services/authService.js"
 
 const LoginRegister = () => {
+  const navigate =  useNavigate()
   const [isLogin, setIsLogin] = useState(true);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    if (isLogin) {
-      console.log("Logging in:", { username, password });
-    } else {
-      console.log("Registering:", { username, password });
+    try {
+      let user;
+
+      if (isLogin) {
+        console.log("Logging in:", { username, password });
+        user = await loginUser(username, password)
+
+      } else {
+        console.log("Registering:", { username, password });
+        user = await registerUser(username, password)
+      }
+
+      console.log(user)
+
+      if (user?.username)
+        navigate(`/todos?user=${user.username}`)
+    } 
+    
+    catch (ex) {
+      console.error("API Auth request Internal Error!")
     }
   };
 

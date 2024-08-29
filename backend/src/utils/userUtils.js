@@ -16,7 +16,7 @@ export const createTokenFromUserId = (userId) => {
 export const extractUserIdFromToken = (token) => {
   try {
     // Decode token
-    const decoded = jwt.verify(token, config.jwtSecret);
+    const decoded = jwt.decode(token, config.jwtSecret);
     const userId = decoded.id;
 
     return userId;

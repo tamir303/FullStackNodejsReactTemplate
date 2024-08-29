@@ -1,0 +1,97 @@
+/* Main container styling */
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: hsl(210, 60%, 98%); /* Light blue background */
+}
+
+/* Box that contains the todo input fields and list */
+.todoBox {
+  width: 100%;
+  max-width: 500px;
+  padding: 20px;
+  background-color: #ffffff; /* White background */
+  border-radius: 10px;
+  box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.15); /* Softer shadow */
+  transition: transform 0.3s; /* Smooth scale transition */
+}
+
+.todoBox:hover {
+  transform: scale(1.02); /* Slightly enlarge on hover */
+}
+
+/* Title styling */
+.title {
+  font-family: 'Roboto', sans-serif;
+  font-weight: 600; /* Slightly bolder */
+  color: #3f51b5; /* Primary color */
+  margin-bottom: 20px;
+  text-align: center;
+  font-size: 1.8rem; /* Increase title size */
+}
+
+/* Input fields styling */
+.textField {
+  margin-bottom: 15px;
+}
+
+/* Add todo button styling */
+.addButton {
+  background-color: #3f51b5; /* Primary color */
+  color: #fff;
+  font-weight: 500;
+  width: 100%;
+  padding: 10px;
+  border-radius: 5px; /* Rounded corners */
+  transition: background-color 0.3s, transform 0.2s; /* Smooth transitions */
+}
+
+.addButton:hover {
+  background-color: #303f9f; /* Darker primary color on hover */
+  transform: translateY(-2px); /* Lift effect */
+}
+
+/* List styling */
+.todoList {
+  margin-top: 20px;
+}
+
+/* Individual todo item styling */
+.todoItem {
+  padding: 12px 15px;
+  border-bottom: 1px solid #e0e0e0; /* Light grey border */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: background-color 0.3s; /* Smooth transition for hover */
+}
+
+.todoItem:hover {
+  background-color: #f1f1f1; /* Light background on hover */
+}
+
+/* Checkbox and text */
+.todoText {
+  flex-grow: 1;
+  margin-left: 10px;
+  font-size: 1rem; /* Increase text size */
+}
+
+/* Todo text with completed styling */
+.completed {
+  text-decoration: line-through;
+  color: #757575; /* Grey color */
+}
+
+/* Delete button styling */
+.deleteButton {
+  color: #f44336; /* Red color */
+  cursor: pointer; /* Pointer cursor on hover */
+  transition: color 0.3s; /* Smooth color transition */
+}
+
+.deleteButton:hover {
+  color: #d32f2f; /* Darker red on hover */
+}
