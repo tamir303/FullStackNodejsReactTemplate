@@ -1,6 +1,6 @@
 import db from "../database/database.js";
 
-const todoItemSchema = db.mongoose.Schema({
+const todoItemSchema = new db.mongoose.Schema({
     title: {
         type: String,
         required: true,
@@ -28,7 +28,7 @@ const todoItemSchema = db.mongoose.Schema({
       },
 })
 
-TodoItemSchema.pre('save', function (next) {
+todoItemSchema.pre('save', function (next) {
     this.changedAt = Date.now();
     next();
   });

@@ -33,8 +33,6 @@ const LoginRegister = () => {
         user = await registerUser(username, password);
       }
   
-      console.log("User:", user);
-  
       if (user?.username) {
         navigate(`/todos?user=${user.username}`);
       } else {

@@ -1,7 +1,12 @@
 import mongoose from "mongoose";
 import db from "../database/database.js";
 
-const todoListSchema = db.mongoose.Schema({
+const todoListSchema = new db.mongoose.Schema({
+    user: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    },
+
     todos: [
         {
             type: mongoose.Schema.Types.ObjectId,
