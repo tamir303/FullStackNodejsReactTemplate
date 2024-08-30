@@ -1,0 +1,50 @@
+register:
+  post:
+    summary: Register a new user
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas.yaml#/User'
+    responses:
+      '201':
+        description: User created successfully
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas.yaml#/User'
+      '400':
+        description: Bad request (validation errors)
+      '500':
+        description: Internal server error
+
+login:
+  post:
+    summary: Log in a user
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas.yaml#/Login'
+    responses:
+      '200':
+        description: User logged in successfully
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: "Login successful"
+                token:
+                  type: string
+                  example: "your_jwt_token_here"
+      '400':
+        description: Bad request (invalid credentials)
+      '401':
+        description: Unauthorized (incorrect credentials)
+      '500':
+        description: Internal server error

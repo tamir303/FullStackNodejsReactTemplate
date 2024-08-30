@@ -4,26 +4,42 @@ const loggerMiddleware = async (req, res, next) => {
   const { method, url, headers, body, query } = req;
   const timestamp = new Date().toISOString();
 
-  // Dont log passwords
-  if (body?.password)
-    body.password = "*******"
+  // Create a log object to accumulate log data
+  const logData = {
+    timestamp,
+    method,
+    url,
+    query,
+    body: { ...body },
+    response: {},
+  };
 
-  // Log request details
-  console.log(
-    chalk.blue(`[${timestamp}]`),
-    chalk.green(`${method} request to ${url}`)
-  );
-  console.log(chalk.yellow(`Query: ${JSON.stringify(query)}`));
-  console.log(chalk.yellow(`Body: ${JSON.stringify(body, null, 2)}`));
+  // Hide passwords in logs
+  if (logData.body?.password) {
+    logData.body.password = "*******";
+  }
 
   // Listen for the response to log status code
   res.on("finish", async () => {
-    if (res.statusCode >= 400) {
-      console.log(chalk.bold(`Response Status: ${res.statusCode}`));
-      console.log(chalk.red(`Response Message: ${res.statusMessage}`))
+    logData.response.statusCode = res.statusCode;
+    logData.response.statusMessage = res.statusMessage;
+
+    // Format the log data as a long string
+    const logString = `[${logData.timestamp}] ${logData.method} request to ${logData.url} with query ${JSON.stringify(logData.query)} and body ${JSON.stringify(logData.body)} resulted in a response with status code ${logData.response.statusCode} (${logData.response.statusMessage}).`;
+
+    // Apply different colors based on the status code range
+    if (res.statusCode < 100) {
+      console.log(chalk.gray(logString)); // 0-99: Gray
+    } else if (res.statusCode < 200) {
+      console.log(chalk.blue(logString)); // 100-199: Blue
+    } else if (res.statusCode < 300) {
+      console.log(chalk.green(logString)); // 200-299: Green
+    } else if (res.statusCode < 400) {
+      console.log(chalk.yellow(logString)); // 300-399: Yellow
+    } else if (res.statusCode < 500) {
+      console.log(chalk.red(logString)); // 400-499: Red
     } else {
-      console.log(chalk.bold(`Response Status: ${res.statusCode}`));
-      console.log(chalk.blue(`Response Message: ${res.statusMessage}`))
+      console.log(chalk.magenta(logString)); // 500+: Magenta
     }
   });
 

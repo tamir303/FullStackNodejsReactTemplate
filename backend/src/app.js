@@ -4,7 +4,7 @@ import defaultMiddlewares from "./middleware/defaultMiddlewars.js";
 import authRouter from "./routes/authRoutes.js";
 import { authenticateJWT } from "./middleware/authMiddleware.js";
 import swaggerUi from "swagger-ui-express";
-import { swaggerSpec } from "../swagger.js";
+import { swaggerSpec } from "./swagger/swagger.js";
 import loggerMiddleware from "./middleware/logMiddleware.js";
 
 const app = express();
@@ -29,6 +29,12 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 // Register user-related routes
 app.use('/auth', authRouter);
 
+// Error handle
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(500).json({ error: "Something went wrong!" });
+});
+  
 // Connect to MongoDB
 connectToMongo();
 

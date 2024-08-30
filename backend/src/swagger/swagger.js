@@ -1,6 +1,6 @@
 import swaggerJsdoc from "swagger-jsdoc";
-import config from "./src/config/index.js";
-import chalk from 'chalk';
+import config from "../config/index.js";
+import path from "path";
 
 export const swaggerOptions = {
   definition: {
@@ -17,7 +17,9 @@ export const swaggerOptions = {
       },
     ],
   },
-  apis: ["./src/routes/*.js"],
+  apis: [
+    path.resolve("./src/swagger/swagger.yaml")
+  ],
 };
 
 export const swaggerSpec = swaggerJsdoc(swaggerOptions);
