@@ -6,6 +6,7 @@ import { authenticateJWT } from "./middleware/authMiddleware.js";
 import swaggerUi from "swagger-ui-express";
 import { swaggerSpec } from "./swagger/swagger.js";
 import loggerMiddleware from "./middleware/logMiddleware.js";
+import todoRouter from "./routes/todoRoutes.js";
 
 const app = express();
 
@@ -28,6 +29,9 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // Register user-related routes
 app.use('/auth', authRouter);
+
+// Apply todo actions
+app.use('/todo', todoRouter)
 
 // Error handle
 app.use((err, req, res, next) => {

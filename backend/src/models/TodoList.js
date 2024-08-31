@@ -4,7 +4,8 @@ import db from "../database/database.js";
 const todoListSchema = new db.mongoose.Schema({
     user: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'User'
+        ref: 'User',
+        required: true
     },
 
     todos: [

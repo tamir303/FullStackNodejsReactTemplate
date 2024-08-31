@@ -1,87 +1,113 @@
-import TodoItem from "../models/TodoItem";
-import TodoList from "../models/TodoList";
-import User from "../models/User.js";
-import { extractUserIdFromToken } from "../utils/userUtils.js"
+import TodoItem from "../models/TodoItem.js";
+import TodoList from "../models/TodoList.js";
 
 class TodoService {
     static async addTodo(userId, title, description) {
         try {
+            // Find the user's todo list
+            let todoList = await TodoList.findOne({ user: userId });
 
+            // If no todo list exists, create one
+            if (!todoList) {
+                todoList = new TodoList({ user: userId });
+                await todoList.save();
+            }
+
+            if (this.getSpecificTodo(userId, title))
+                throw new Error("Todo with this title already exist!")
+
+            // Create a new todo item
+            const newTodo = new TodoItem({ title: title, description: description, user: userId });
+
+            // Save the new todo item
+            const savedTodo = await newTodo.save();
+
+            // Add the new todo item to the todo list
+            todoList.todos.push(savedTodo._id);
+            await todoList.save();
+
+            return savedTodo;
         } catch (ex) {
-            throw new Error("Failed to create todo.");
+            throw new Error("Failed to create todo.", ex.message);
         }
     }
 
     static async editTodo(userId, title, description, complete) {
         try {
-            const todo = await this.getSpecificTodo(userId, title)
+            const todo = await this.getSpecificTodo(userId, title);
 
             if (todo) {
-                if (description)
-                    todo.description = description
-                if (complete)
-                    todo.complete = complete
+                if (description) todo.description = description;
+                if (complete !== undefined) todo.complete = complete;
 
-                return todo.save()
+                return await todo.save();
             }
 
-            throw new Error(`Failed to edit todo.", ${todo}`);
+            throw new Error(`Failed to edit todo with title: ${title}`);
         } catch (ex) {
             throw new Error(ex);
         }
     }
 
-    static async deteleTodo(userId, title) {
+    static async deleteTodo(userId, title) {
         try {
-            const todo = await this.getSpecificTodo(userId, title)
-
-            if (todo)
-                return todo.deleteOne()
-
-            throw new Error(`Failed to remove todo.", ${todo}`);
+            const todoList = await TodoList.findOne({ user: userId });
+    
+            if (!todoList) {
+                throw new Error(`Todo list not found for user with ID: ${userId}`);
+            }
+    
+            // Find the index of the todo with the specified title
+            const todoIndex = todoList.todos.findIndex(todo => todo.title === title);
+    
+            if (todoIndex > -1) {
+                // Remove the todo from the todos array
+                todoList.todos.splice(todoIndex, 1);
+                // Save the updated todoList
+                await todoList.save();
+                return { message: "Todo deleted successfully" };
+            } else {
+                throw new Error(`Todo with title "${title}" not found in the list`);
+            }
         } catch (ex) {
-            throw new Error(ex);
+            throw new Error(ex.message || "An error occurred while deleting the todo");
         }
     }
+    
 
     static async getUserTodos(userId) {
         try {
-            const todoList = await TodoList.findOne({ user: userId })
-            return todoList.todos
-        } catch (ex) {
+            const todoList = await TodoList.findOne({ user: userId }).populate('todos');
+            return todoList ? todoList.todos : [];
+        } catch (ex) {  
             throw new Error("Failed to get todos.");
         }
     }
 
     static async getSpecificTodo(userId, title) {
         try {
-            const todoList = await TodoList.findOne({ user: userId })
-            const todoItems = await TodoItem.find({ _id: { $in: todoList.todos } })
-            return todoItems.filter(todo => todo.title = title)[0]
+            // Find the user's todo list
+            let todoList = await TodoList.findOne({ user: userId });
+
+            // If no todo list exists, create one
+            if (!todoList) {
+                throw new Error("User doesn't have a list yet!")
+            }
+
+            // Find the TodoItems in the user's todo list
+            const todoItems = await TodoItem.find({ _id: { $in: todoList.todos } });
+
+            // Find the TodoItem with the given title
+            const specificTodo = todoItems.find(todo => todo.title === title);
+
+            if (!specificTodo)
+                return null
+
+            return specificTodo;
         } catch (ex) {
-            throw new Error(ex);
-        } 
-    }
-
-    static async getCurrentUserTodoList(token) {
-        try {
-            let currentUserTodoList;
-            const userId = extractUserIdFromToken(token);
-            const user = await User.findById(userId);
-
-            if (!user) 
-                throw new Error("Failed to find current user!");
-    
-            currentUserTodoList = await TodoList.findOne({ user: user._id });
-
-            if (!currentUserTodoList)
-                currentUserTodoList = await new TodoList({ user: user._id }).save()
-
-            return currentUserTodoList;
-        } catch (error) {
-            console.error("Error retrieving the current user's todo list:", error);
-            throw new Error("Unable to retrieve the todo list. Please try again later.");
+            throw new Error(ex.message);
         }
     }
-    
 }
+
+export default TodoService;

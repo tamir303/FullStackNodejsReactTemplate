@@ -96,6 +96,23 @@ class UserService {
       throw new Error("Failed to retrieve user by ID.");
     }
   }
+
+  // Retrieves current user with token 
+  static async getCurrentUser(token) {
+    try {
+        // Find the user by ID
+        const userId = extractUserIdFromToken(token);
+        const user = await User.findById(userId);
+
+        if (!user) 
+            throw new Error("Failed to find current user!");
+
+        return user; // Return the user if found
+    } catch (error) {
+        console.error("Error retrieving the current user", error);
+        throw new Error("Unable to retrieve the current user.");
+    }
+}
 }
 
 export default UserService;
