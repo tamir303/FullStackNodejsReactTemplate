@@ -13,8 +13,14 @@ class TodoService {
                 await todoList.save();
             }
 
-            if (this.getSpecificTodo(userId, title))
+            // Check if todo with given title already exist
+            const existedTodo = await this.getSpecificTodo(userId, title)
+
+            // If true, don't create new todo
+            if (existedTodo) {
+                console.error("Cannot create todo, title already exist!")
                 throw new Error("Todo with this title already exist!")
+            }
 
             // Create a new todo item
             const newTodo = new TodoItem({ title: title, description: description, user: userId });
@@ -51,7 +57,7 @@ class TodoService {
 
     static async deleteTodo(userId, title) {
         try {
-            const todoList = await TodoList.findOne({ user: userId });
+            const todoList = await TodoList.findOne({ user: userId }).populate("todos");
     
             if (!todoList) {
                 throw new Error(`Todo list not found for user with ID: ${userId}`);
@@ -59,15 +65,19 @@ class TodoService {
     
             // Find the index of the todo with the specified title
             const todoIndex = todoList.todos.findIndex(todo => todo.title === title);
-    
+            const todoItem = TodoItem.findOne({ title: title })
+
             if (todoIndex > -1) {
                 // Remove the todo from the todos array
                 todoList.todos.splice(todoIndex, 1);
-                // Save the updated todoList
+
+                // Save the updated todoList, remove todoItem
                 await todoList.save();
+                await todoItem.deleteOne()
+
                 return { message: "Todo deleted successfully" };
             } else {
-                throw new Error(`Todo with title "${title}" not found in the list`);
+                throw new Error(`Todo with title ${title} not found in the list`);
             }
         } catch (ex) {
             throw new Error(ex.message || "An error occurred while deleting the todo");
@@ -77,7 +87,7 @@ class TodoService {
 
     static async getUserTodos(userId) {
         try {
-            const todoList = await TodoList.findOne({ user: userId }).populate('todos');
+            const todoList = await TodoList.findOne({ user: userId }).populate('todos').exec();
             return todoList ? todoList.todos : [];
         } catch (ex) {  
             throw new Error("Failed to get todos.");

@@ -9,15 +9,15 @@ const TodoItem = ({ todo, removeTodo, toggleComplete }) => {
     <ListItem className="todoItem">
       <Checkbox
       className="completed"
-        checked={todo.completed}
-        onChange={() => toggleComplete(todo.id)}
+        checked={todo.complete}
+        onChange={() => toggleComplete(todo.title)}
       />
       <ListItemText
         primary={todo.title}
         secondary={`${todo.description} - Created at: ${todo.createdAt}`}
         className="todoText"
       />
-      <IconButton className="deleteButton" edge="end" onClick={() => removeTodo(todo.id)}>
+      <IconButton className="deleteButton" edge="end" onClick={() => removeTodo(todo.title)}>
         <DeleteIcon />
       </IconButton>
     </ListItem>

@@ -1,41 +1,58 @@
-import React, { useState } from "react";
-import TodoList from "./components/TodoList";
+import React, { useState, useEffect, useLayoutEffect } from "react";
+import TodoList from "./components/TodoList.js";
 import { Container, Typography, Box, Button, TextField } from "@mui/material";
-import { useSearchParams } from "react-router-dom";
-import "./TodoListPage.css"; 
+import { createTodo, deleteTodo, editTodo, getAllCurrentUserTodos } from "../../services/todoService.js";
+import "./TodoListPage.css";
 
 const TodoListPage = () => {
-  const [searchParams] = useSearchParams();
-  const username = searchParams.get("user");
-
-  const [todos, setTodos] = useState([]);
+  const [todos, setTodos] = useState([]);  // Initialize with an empty array
   const [newTitle, setNewTitle] = useState("");
   const [newDescription, setNewDescription] = useState("");
 
-  const addTodo = () => {
-    const newTodo = {
-      id: Date.now(),
-      title: newTitle,
-      description: newDescription,
-      completed: false,
-      createdAt: new Date().toLocaleString(),
+  useLayoutEffect(() => {
+    const fetchTodos = async () => {
+      try {
+        const fetchedTodos = await getAllCurrentUserTodos();
+        setTodos(Array.isArray(fetchedTodos) ? fetchedTodos : []);
+      } catch (error) {
+        console.error("Failed to fetch todos:", error);
+      }
     };
-    setTodos([...todos, newTodo]);
-    setNewTitle("");
-    setNewDescription("");
+
+    fetchTodos();
+  }, []);
+
+  const addTodo = async () => {
+    try {
+      const newTodo = await createTodo(newTitle, newDescription);
+      setTodos([...todos, newTodo]);
+      setNewTitle("");
+      setNewDescription("");
+    } catch (error) {
+      console.error("Failed to add todo:", error);
+    }
   };
 
-  const removeTodo = (id) => {
-    setTodos(todos.filter((todo) => todo.id !== id));
+  const removeTodo = async (title) => {
+    try {
+      await deleteTodo(title);
+      setTodos(todos.filter(todo => todo.title !== title));
+    } catch (error) {
+      console.error("Failed to remove todo:", error);
+    }
   };
 
-  const toggleComplete = (id) => {
+  const toggleComplete = (title) => {
     setTodos(
       todos.map((todo) =>
-        todo.id === id ? { ...todo, completed: !todo.completed } : todo
+        todo.title === title ? { ...todo, complete: !todo.complete } : todo
       )
     );
   };
+
+  if (!Array.isArray(todos)) {
+    return <Typography variant="h6">Loading...</Typography>;
+  }
 
   return (
     <Container className="container" maxWidth="sm">

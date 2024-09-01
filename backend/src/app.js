@@ -1,12 +1,11 @@
 import express from "express";
 import { connectToMongo } from "../src/database/database.js";
-import defaultMiddlewares from "./middleware/defaultMiddlewars.js";
-import authRouter from "./routes/authRoutes.js";
 import { authenticateJWT } from "./middleware/authMiddleware.js";
-import swaggerUi from "swagger-ui-express";
-import { swaggerSpec } from "./swagger/swagger.js";
+
+import defaultMiddlewares from "./middleware/defaultMiddlewars.js";
 import loggerMiddleware from "./middleware/logMiddleware.js";
-import todoRouter from "./routes/todoRoutes.js";
+import errorHandlingMiddleware from "./middleware/errorHandlingMiddleware.js";
+import apiMiddlewares from "./middleware/apiMiddleware.js";
 
 const app = express();
 
@@ -24,20 +23,13 @@ app.use(loggerMiddleware);
 // Apply JWT authentication, excluding certain routes
 app.use(authenticateJWT(routesWithoutAuth));
 
-// Serve Swagger UI at /api-docs
-app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
-
-// Register user-related routes
-app.use('/auth', authRouter);
-
-// Apply todo actions
-app.use('/todo', todoRouter)
+// Apply the array of api's route handlers to the app
+apiMiddlewares.forEach(([path, ...handlers]) => {
+    app.use(path, ...handlers);
+});
 
 // Error handle
-app.use((err, req, res, next) => {
-    console.error(err.stack);
-    res.status(500).json({ error: "Something went wrong!" });
-});
+app.use(errorHandlingMiddleware)
   
 // Connect to MongoDB
 connectToMongo();

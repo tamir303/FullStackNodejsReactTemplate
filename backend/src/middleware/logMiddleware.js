@@ -19,12 +19,14 @@ const loggerMiddleware = async (req, res, next) => {
     logData.body.password = "*******";
   }
 
+  // Run api request
+  next();
+
   // Listen for the response to log status code
   res.on("finish", async () => {
     logData.response.statusCode = res.statusCode;
     logData.response.statusMessage = res.statusMessage;
 
-    // Format the log data as a long string
     const logString = `[${logData.timestamp}] ${logData.method} request to ${logData.url} with query ${JSON.stringify(logData.query)} and body ${JSON.stringify(logData.body)} resulted in a response with status code ${logData.response.statusCode} (${logData.response.statusMessage}).`;
 
     // Apply different colors based on the status code range
@@ -42,9 +44,6 @@ const loggerMiddleware = async (req, res, next) => {
       console.log(chalk.magenta(logString)); // 500+: Magenta
     }
   });
-
-  // Call the next middleware or route handler
-  next();
 };
 
 export default loggerMiddleware;

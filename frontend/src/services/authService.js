@@ -1,54 +1,60 @@
 import axios from "axios";
 
-const register_endpoint = "http://localhost:4000/auth/register";
-const login_endpoint = "http://localhost:4000/auth/login";
+const BASE_URL = "http://localhost:4000/auth";
+
+// Create a reusable axios instance with a base URL
+const apiClient = axios.create({
+  baseURL: BASE_URL,
+  withCredentials: true,
+  headers: {
+    "Content-Type": "application/json",
+    "Accept": "application/json"
+  },
+});
+
+// Handle API responses and errors
+const handleResponse = (response) => {
+  if (response.data && response.data.token && response.data.user) {
+    return response.data;
+  } else {
+    throw new Error("Invalid response structure");
+  }
+};
+
+const handleError = (error, action) => {
+  const message = error.response?.data?.message || error.message || "An error occurred";
+  console.error(`${action} failed:`, message);
+  throw new Error(`${action} failed: ${message}`);
+};
 
 // POST request for user registration
 export const registerUser = async (username, password) => {
   try {
-    const res = await axios.post(register_endpoint, {
-      username,
-      password,
-    });
+    const response = await apiClient.post("/register", { username, password });
+    const data = handleResponse(response);
 
-    console.log(res.data)
-
-    if (res.data && res.data.token && res.data.user) {
-      // Store token in localStorage
-      localStorage.setItem("token", res.data.token);
-      return res.data.user;
-    } else {
-      throw new Error("Invalid registration response");
-    }
+    // Store token in localStorage
+    localStorage.setItem("token", data.token);
+    return data.user;
   } catch (error) {
-    console.error("Registration failed:", error);
-    throw new Error("Registration failed!");
+    handleError(error, "Registration");
   }
 };
 
 // POST request for user login
 export const loginUser = async (username, password) => {
   try {
-    const res = await axios.post(login_endpoint, {
-      username,
-      password,
-    });
+    const response = await apiClient.post("/login", { username, password });
+    const data = handleResponse(response);
 
-    console.log(res.data)
-
-    if (res.data && res.data.token && res.data.user) {
-      // Store token in localStorage if not already stored
-      if (!localStorage.getItem("token")) {
-        localStorage.setItem("token", res.data.token);
-      }
-
-      return res.data.user;
-    } else {
-      throw new Error("Invalid login response");
+    // Store token in localStorage if not already stored
+    if (!localStorage.getItem("token")) {
+      localStorage.setItem("token", data.token);
     }
+
+    return data.user;
   } catch (error) {
-    console.error("Login failed:", error);
-    throw new Error("Login failed!");
+    handleError(error, "Login");
   }
 };
 
