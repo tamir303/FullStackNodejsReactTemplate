@@ -3,18 +3,20 @@ import { ListItem, Checkbox, ListItemText, IconButton } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import "../TodoListPage.css";
 
-
-const TodoItem = ({ todo, removeTodo, toggleComplete }) => {
+const TodoItem = ({ todo, removeTodo, toggleComplete, handleTodoClick, isSelected }) => {
   return (
-    <ListItem className="todoItem">
+    <ListItem 
+      className={`todoItem ${isSelected ? "selected" : ""}`} // Add a 'selected' class if the item is chosen
+      onClick={() => handleTodoClick(todo.title)} // Handle click to set the item as selected
+    >
       <Checkbox
-      className="completed"
+        className="completed"
         checked={todo.complete}
         onChange={() => toggleComplete(todo.title)}
       />
       <ListItemText
         primary={todo.title}
-        secondary={`${todo.description} - Created at: ${todo.createdAt}`}
+        secondary={`${todo.description} - Created at: ${(new Date(todo.createdAt)).toLocaleString()}`}
         className="todoText"
       />
       <IconButton className="deleteButton" edge="end" onClick={() => removeTodo(todo.title)}>

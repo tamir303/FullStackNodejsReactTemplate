@@ -3,7 +3,7 @@ import TodoItem from "./TodoItem";
 import { List } from "@mui/material";
 import "../TodoListPage.css";
 
-const TodoList = ({ todos, removeTodo, toggleComplete }) => {
+const TodoList = ({ todos, removeTodo, toggleComplete, handleTodoClick, todoClicked }) => {
   return (
     <List className="todoList">
       {todos.map((todo) => (
@@ -12,6 +12,8 @@ const TodoList = ({ todos, removeTodo, toggleComplete }) => {
           todo={todo}
           removeTodo={removeTodo}
           toggleComplete={toggleComplete}
+          handleTodoClick={handleTodoClick}
+          isSelected={todoClicked === todo.title}
         />
       ))}
     </List>

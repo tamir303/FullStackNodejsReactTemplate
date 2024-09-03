@@ -27,7 +27,7 @@ const loggerMiddleware = async (req, res, next) => {
     logData.response.statusCode = res.statusCode;
     logData.response.statusMessage = res.statusMessage;
 
-    const logString = `[${logData.timestamp}] ${logData.method} request to ${logData.url} with query ${JSON.stringify(logData.query)} and body ${JSON.stringify(logData.body)} resulted in a response with status code ${logData.response.statusCode} (${logData.response.statusMessage}).`;
+    const logString = `[SERVER: ${logData.timestamp}] ${logData.method} request to ${logData.url} with query ${JSON.stringify(logData.query)} and body ${JSON.stringify(logData.body)} resulted in a response with status code ${logData.response.statusCode} (${logData.response.statusMessage}).`;
 
     // Apply different colors based on the status code range
     if (res.statusCode < 100) {

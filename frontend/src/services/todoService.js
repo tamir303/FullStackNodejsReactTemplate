@@ -12,7 +12,7 @@ const apiClient = axios.create({
 });
 
 // Handle API responses and errors
-const handleResponse = (response) => response.data;
+const handleResponse = (response) => response.data.todo;
 
 const handleError = (error, action) => {
   const message = error.response?.data?.message || error.message || "An error occurred";
@@ -24,7 +24,7 @@ const handleError = (error, action) => {
 export const createTodo = async (title, description) => {
   try {
     const response = await apiClient.post("/create", { title, description });
-    return handleResponse(response);
+        return handleResponse(response);
   } catch (error) {
     handleError(error, "Todo creation");
   }
@@ -44,7 +44,6 @@ export const editTodo = async (title, description, complete) => {
 export const deleteTodo = async (title) => {
   try {
     const response = await apiClient.post("/delete", { title });
-    return handleResponse(response);
   } catch (error) {
     handleError(error, "Todo deletion");
   }
@@ -54,6 +53,7 @@ export const deleteTodo = async (title) => {
 export const getAllCurrentUserTodos = async () => {
   try {
     const response = await apiClient.get("/getAll");
+    console.log(response)
     return handleResponse(response);
   } catch (error) {
     handleError(error, "Fetching todos");
