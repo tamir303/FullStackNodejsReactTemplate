@@ -1,5 +1,3 @@
-import chalk from "chalk";
-
 const loggerMiddleware = async (req, res, next) => {
   const { method, url, headers, body, query } = req;
   const timestamp = new Date().toISOString();
@@ -31,17 +29,17 @@ const loggerMiddleware = async (req, res, next) => {
 
     // Apply different colors based on the status code range
     if (res.statusCode < 100) {
-      console.log(chalk.gray(logString)); // 0-99: Gray
+      console.log(logString); // 0-99: Gray
     } else if (res.statusCode < 200) {
-      console.log(chalk.blue(logString)); // 100-199: Blue
+      console.log(logString); // 100-199: Blue
     } else if (res.statusCode < 300) {
-      console.log(chalk.green(logString)); // 200-299: Green
+      console.log(logString); // 200-299: Green
     } else if (res.statusCode < 400) {
-      console.log(chalk.yellow(logString)); // 300-399: Yellow
+      console.log(logString); // 300-399: Yellow
     } else if (res.statusCode < 500) {
-      console.log(chalk.red(logString)); // 400-499: Red
+      console.log(logString); // 400-499: Red
     } else {
-      console.log(chalk.magenta(logString)); // 500+: Magenta
+      console.log(logString); // 500+: Magenta
     }
   });
 };

@@ -1,5 +1,3 @@
-import chalk from "chalk";
-
 const errorHandlingMiddleware = (err, req, res, next) => {
   const { method, url } = req;
   const timestamp = new Date().toISOString();
@@ -9,7 +7,7 @@ const errorHandlingMiddleware = (err, req, res, next) => {
   const stackTrace = err.stack.split('\n')[1].trim(); // Get the line number and file name
 
   // Log the error details
-  console.error(chalk.red(`[${timestamp}] Error during ${method} request to ${url}: ${errorMessage} at ${stackTrace}`));
+  console.error(`[${timestamp}] Error during ${method} request to ${url}: ${errorMessage} at ${stackTrace}`);
 
   // Send error response
   res.status(500).json({ error: "Internal Server Error" });

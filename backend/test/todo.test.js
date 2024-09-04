@@ -1,22 +1,20 @@
-import db, { connectToMongo } from "../src/database/database.js";
+import db from "../src/database/database.js";
 import request from "supertest";
 import app from "../src/app.js";
 import TodoItem from "../src/models/TodoItem.js";
 import TodoList from "../src/models/TodoList.js";
+import User from "../src/models/User.js"
 
 describe("Todo API", () => {
     let token;
     let userId;
 
     beforeAll(async () => {
-        // Connect to the test database
-        await connectToMongo();
-
         // Create a user for testing
         const userResponse = await request(app)
             .post("/auth/register")
             .send({
-                username: "testuser",
+                username: "testtodo",
                 password: "password"
             });
         
@@ -26,7 +24,7 @@ describe("Todo API", () => {
         const loginResponse = await request(app)
             .post("/auth/login")
             .send({
-                username: "testuser",
+                username: "testtodo",
                 password: "password"
             });
 
@@ -41,6 +39,9 @@ describe("Todo API", () => {
 
     afterAll(async () => {
         // Close the database connection
+        await User.deleteOne({ username: "testtodo" })
+        await TodoItem.deleteMany();
+        await TodoList.deleteMany();
         await db.mongoose.connection.close();
     });
 

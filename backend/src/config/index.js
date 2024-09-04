@@ -13,4 +13,6 @@ switch (process.env?.NODE_ENV) {
         config = defaultConfig
 }
 
+console.log(`Set ${process.env?.NODE_ENV || "default"} Configurations`)
+
 export default config
