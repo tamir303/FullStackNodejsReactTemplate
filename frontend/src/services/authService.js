@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const BASE_URL = "http://localhost:4000/auth";
+const BASE_URL = "http://localhost:8080/api/auth";
 
 // Create a reusable axios instance with a base URL
 const apiClient = axios.create({

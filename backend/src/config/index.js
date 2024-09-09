@@ -14,5 +14,6 @@ switch (process.env?.NODE_ENV) {
 }
 
 console.log(`Set ${process.env?.NODE_ENV || "default"} Configurations`)
+console.log(`${JSON.stringify(process.env, null, 2)}`)
 
 export default config

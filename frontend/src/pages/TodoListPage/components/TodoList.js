@@ -1,5 +1,5 @@
 import React from "react";
-import TodoItem from "./TodoItem";
+import TodoItem from "./TodoItem.js";
 import { List } from "@mui/material";
 import "../TodoListPage.css";
 

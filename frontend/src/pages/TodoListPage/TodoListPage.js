@@ -33,7 +33,7 @@ const TodoListPage = () => {
   // Handle clicks on a todo item
   const handleTodoClick = async (title) => {
     // Check if the clicked title is different from the currently selected todo
-    if (title !== todoClicked) {
+    if (title && title !== todoClicked) {
       // Find the relevant todo in the list
       const todo = await TodoUtils.getTodoFromTitle(todos, title);
       // Set the selected todo's title and description to the input fields
@@ -91,11 +91,7 @@ const TodoListPage = () => {
       setTodos(todos.filter(todo => todo.title !== title)); // Update the todos state to remove the deleted todo
 
       // Clear title and description if the removed todo was selected
-      if (todoClicked === title) {
-        setTodoClicked("");
-        setNewTitle("");
-        setNewDescription("");
-      }
+      await handleTodoClick("")
     } catch (error) {
       console.error("Failed to remove todo:", error); // Log any error that occurs
     }
@@ -149,7 +145,7 @@ const TodoListPage = () => {
             fullWidth
             className={todoClicked !== "" ? "editButton" : "addButton"} // Change class based on state
           >
-            {todoClicked !== "" ? "Edit Todo" : "Add Todo"} // Change button text based on state
+            {todoClicked !== "" ? "Edit Todo" : "Add Todo"}
           </Button>
         </Box>
         {

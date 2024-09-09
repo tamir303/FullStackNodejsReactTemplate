@@ -1,6 +1,6 @@
 import React from "react";
 import { ListItem, Checkbox, ListItemText, IconButton } from "@mui/material";
-import DeleteIcon from "@mui/icons-material/Delete";
+import DeleteIcon from "@mui/icons-material/Delete.js";
 import "../TodoListPage.css";
 
 const TodoItem = ({ todo, removeTodo, toggleComplete, handleTodoClick, isSelected }) => {
