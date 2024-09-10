@@ -54,13 +54,6 @@ jobs:
           cd backend
           npm install
 
-      - name: Wait for MongoDB to be ready
-        run: |
-          echo "Waiting for MongoDB to be ready..."
-          while ! mongo --host mongodb --username root --password example --eval "print(\"waited for connection\")"; do
-            sleep 1
-          done
-
       - name: Run Tests
         run: |
           cd backend
