@@ -9,7 +9,25 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    services:
+      mongodb:
+        image: mongo:4.4.6
+        env:
+          MONGO_INITDB_ROOT_USERNAME: admin
+          MONGO_INITDB_ROOT_PASSWORD: admin
+          MONGO_INITDB_DATABASE: APP-DATABASE
+        ports:
+          - 27017:27017
+        options: >-
+          --health-cmd mongo
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+    
       - name: Install mongosh
         run: |
           sudo apt-get install gnupg
@@ -25,9 +43,6 @@ jobs:
             db = db.getSiblingDB('APP-DB');
             db.createUser({ user: 'APP-USERNAME', pwd: 'APP-PASSWORD', roles: [{ role: 'readWrite', db: 'APP-DB' }] })
             db.createCollection('APP-COLLECTION');
-    
-      - name: Checkout code
-        uses: actions/checkout@v2
       
       - name: Set up Node.js
         uses: actions/setup-node@v2
