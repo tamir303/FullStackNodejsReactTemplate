@@ -4,8 +4,6 @@ on:
   push:
     branches:
       - main
-    pull_request:
-      - main
 
 jobs:
   build:
@@ -13,13 +11,13 @@ jobs:
 
     services:
       mongodb:
-        image: mongo:6.0
+        image: mongo:'6.0'
         env:
           MONGO_INITDB_ROOT_USERNAME: test
           MONGO_INITDB_ROOT_PASSWORD: password
           MONGO_INITDB_DATABASE: test
         options: >-
-          --health-cmd "mongo --eval 'db.adminCommand(\"ping\")'"
+          --health-cmd "mongo --eval 'db.runCommand({ ping: 1 })'"
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
@@ -27,6 +25,11 @@ jobs:
           - 27017:27017
 
     steps:
+      # Log incase mongodb service fails to start
+      - name: Get MongoDB container logs
+        if: failure()
+        run: docker logs $(docker ps -q --filter name=mongodb)
+    
       - name: Checkout code
         uses: actions/checkout@v2
       
